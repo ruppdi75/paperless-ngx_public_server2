@@ -16,8 +16,8 @@ This guide provides comprehensive instructions for installing Paperless-ngx usin
 
 - [ ] **Domain Name**: Valid domain pointing to your server
 - [ ] **DNS Configuration**: A record configured for your domain
-- [ ] **Firewall**: Ports 80 and 443 open for incoming connections
-- [ ] **Port Availability**: Ensure ports 80 and 443 are not in use
+- [ ] **Firewall**: Ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) open for incoming connections
+- [ ] **Port Availability**: Ensure ports 22, 80, and 443 are not in use by conflicting services
 
 ### Pre-Installation Commands
 
@@ -29,6 +29,7 @@ df -h
 free -h
 
 # Check if ports are available
+sudo netstat -tlnp | grep :22
 sudo netstat -tlnp | grep :80
 sudo netstat -tlnp | grep :443
 

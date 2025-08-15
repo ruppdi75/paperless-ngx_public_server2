@@ -23,7 +23,7 @@ A comprehensive, interactive Bash script that automates the complete installatio
 - **Operating System**: Ubuntu 20.04+ or AnduinOS
 - **Privileges**: Root/sudo access required
 - **Domain**: A valid domain name pointing to your server
-- **Ports**: Ports 80 and 443 must be accessible from the internet
+- **Ports**: Ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) must be accessible from the internet
 - **Memory**: At least 2GB RAM recommended
 - **Storage**: At least 10GB free disk space
 
