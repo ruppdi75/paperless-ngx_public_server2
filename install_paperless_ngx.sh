@@ -49,6 +49,7 @@ PAPERLESS_USER=""
 PAPERLESS_PASSWORD=""
 USER_UID=""
 USER_GID=""
+PAPERLESS_REPO_DIR=""
 
 #===============================================================================
 # UTILITY FUNCTIONS
@@ -483,23 +484,51 @@ setup_paperless() {
     
     log_action "SUCCESS" "Directory structure created with correct permissions"
     
-    # Download configuration files
-    log_action "INFO" "Downloading Paperless-ngx configuration files"
+    # Clone the complete Paperless-ngx repository
+    log_action "INFO" "Cloning complete Paperless-ngx repository"
+    
+    PAPERLESS_REPO_DIR="$PAPERLESS_DIR/paperless-ngx"
+    
+    # Check if git is installed
+    if ! command -v git &> /dev/null; then
+        log_action "INFO" "Installing git"
+        case "$DETECTED_OS" in
+            "Ubuntu"|"AnduinOS")
+                apt update && apt install -y git
+                handle_error $? "git installation" "Installing git package"
+                ;;
+        esac
+    fi
+    
+    # Clone the repository
+    cd "$PAPERLESS_DIR"
+    git clone https://github.com/paperless-ngx/paperless-ngx.git
+    handle_error $? "Repository clone" "Cloning paperless-ngx repository"
+    
+    # Set correct permissions for cloned repository
+    if [[ -n "${SUDO_USER:-}" ]]; then
+        chown -R "$USER_UID:$USER_GID" "$PAPERLESS_REPO_DIR"
+    fi
+    
+    log_action "SUCCESS" "Paperless-ngx repository cloned successfully"
+    
+    # Copy configuration files from the repository
+    log_action "INFO" "Setting up configuration files from repository"
     
     cd "$PAPERLESS_DIR"
     
-    # Download docker-compose.yml (PostgreSQL version)
-    curl -L https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/main/docker/compose/docker-compose.postgres.yml -o docker-compose.yml
-    handle_error $? "docker-compose.yml download" "Downloading docker-compose.yml"
+    # Copy docker-compose.yml (PostgreSQL version)
+    cp "$PAPERLESS_REPO_DIR/docker/compose/docker-compose.postgres.yml" docker-compose.yml
+    handle_error $? "docker-compose.yml copy" "Copying docker-compose.yml from repository"
     
-    # Download environment files
-    curl -L https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/main/docker/compose/docker-compose.env -o docker-compose.env
-    handle_error $? "docker-compose.env download" "Downloading docker-compose.env"
+    # Copy environment files
+    cp "$PAPERLESS_REPO_DIR/docker/compose/docker-compose.env" docker-compose.env
+    handle_error $? "docker-compose.env copy" "Copying docker-compose.env from repository"
     
-    curl -L https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/main/.env -o .env
-    handle_error $? ".env download" "Downloading .env file"
+    cp "$PAPERLESS_REPO_DIR/.env" .env
+    handle_error $? ".env copy" "Copying .env file from repository"
     
-    log_action "SUCCESS" "Configuration files downloaded"
+    log_action "SUCCESS" "Configuration files copied from repository"
     
     # Modify docker-compose.yml
     log_action "INFO" "Configuring docker-compose.yml"
@@ -531,6 +560,31 @@ setup_paperless() {
     echo "PAPERLESS_TIME_ZONE=Europe/Berlin" >> docker-compose.env
     
     log_action "SUCCESS" "Environment files configured"
+    
+    # Apply our security enhancements
+    log_action "INFO" "Applying security enhancements"
+    
+    # Copy our secure environment template if it exists
+    if [[ -f "$SCRIPT_DIR/.env.template" ]]; then
+        cp "$SCRIPT_DIR/.env.template" "$PAPERLESS_DIR/.env.template"
+        log_action "SUCCESS" "Secure environment template copied"
+    fi
+    
+    # Copy our security documentation if it exists
+    if [[ -f "$SCRIPT_DIR/SECURITY_GUIDE.md" ]]; then
+        cp "$SCRIPT_DIR/SECURITY_GUIDE.md" "$PAPERLESS_DIR/SECURITY_GUIDE.md"
+        log_action "SUCCESS" "Security guide copied"
+    fi
+    
+    # Copy our credential generation script if it exists
+    if [[ -f "$SCRIPT_DIR/scripts/generate_secrets.sh" ]]; then
+        mkdir -p "$PAPERLESS_DIR/scripts"
+        cp "$SCRIPT_DIR/scripts/generate_secrets.sh" "$PAPERLESS_DIR/scripts/generate_secrets.sh"
+        chmod +x "$PAPERLESS_DIR/scripts/generate_secrets.sh"
+        log_action "SUCCESS" "Credential generation script copied"
+    fi
+    
+    log_action "SUCCESS" "Security enhancements applied"
     
     # Pull Docker images
     log_action "INFO" "Pulling Docker images (this may take several minutes)"
@@ -679,6 +733,12 @@ generate_final_report() {
     echo "  3. Configure additional settings in the web interface"
     echo "  4. Start uploading documents to $CONSUME_DIR"
     echo
+    print_color "$PURPLE" "📦 Repository Resources:"
+    echo "  • Full repository: $PAPERLESS_REPO_DIR"
+    echo "  • Documentation: $PAPERLESS_REPO_DIR/docs/"
+    echo "  • Examples: $PAPERLESS_REPO_DIR/docker/compose/"
+    echo "  • Source code: $PAPERLESS_REPO_DIR/src/"
+    echo
     print_color "$GREEN" "✅ Installation completed successfully!"
     
     # Create summary log
@@ -697,6 +757,7 @@ generate_final_report() {
         echo "Username: $PAPERLESS_USER"
         echo "Directories configured: consume, media, data, export"
         echo "Services: Paperless-ngx (Docker), Caddy (HTTPS proxy)"
+        echo "Repository: Full paperless-ngx repository cloned to $PAPERLESS_REPO_DIR"
         echo ""
         echo "INSTALLATION COMPLETED SUCCESSFULLY"
     } >> "$LOG_SUMMARY"

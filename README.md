@@ -10,6 +10,7 @@ A comprehensive, interactive Bash script that automates the complete installatio
 ## 🚀 Features
 
 - **Fully Automated Installation**: One-command setup for the entire Paperless-ngx stack
+- **Complete Repository Access**: Clones full Paperless-ngx repository with all documentation and examples
 - **HTTPS Security**: Automatic SSL/TLS certificate management with Caddy
 - **Interactive Configuration**: User-friendly prompts for all configuration options
 - **Multi-OS Support**: Compatible with Ubuntu and AnduinOS
@@ -74,9 +75,11 @@ The installation process is divided into 6 phases:
 
 #### Phase 3: Paperless-ngx Setup
 - Creates directory structure with proper permissions
-- Downloads official Docker Compose configuration
+- Clones complete Paperless-ngx repository from GitHub
+- Copies configuration files from repository
 - Modifies configuration for security (localhost binding)
 - Configures volume mounts to user-specified directories
+- Applies security enhancements from our project
 - Downloads and pulls Docker images
 
 #### Phase 4: Caddy Configuration
@@ -200,6 +203,15 @@ After successful installation:
 3. **Configure settings**: Adjust timezone, language, and other preferences
 4. **Start uploading**: Place documents in your consume directory
 5. **Set up automation**: Configure email fetching, scheduled tasks, etc.
+
+### 📦 Repository Resources
+
+The complete Paperless-ngx repository is available at `/opt/paperless/paperless-ngx/` with:
+
+- **Documentation**: `/opt/paperless/paperless-ngx/docs/`
+- **Configuration Examples**: `/opt/paperless/paperless-ngx/docker/compose/`
+- **Source Code**: `/opt/paperless/paperless-ngx/src/`
+- **Additional Compose Files**: Alternative Docker configurations for different setups
 
 ## 🤝 Contributing
 
