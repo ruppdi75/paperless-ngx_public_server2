@@ -23,10 +23,11 @@ A comprehensive, interactive Bash script that automates the complete installatio
 
 - **Operating System**: Ubuntu 20.04+ or AnduinOS
 - **Privileges**: Root/sudo access required
+- **Git**: Git will be automatically installed if not present
 - **Domain**: A valid domain name pointing to your server
 - **Ports**: Ports 22 (SSH), 80 (HTTP), and 443 (HTTPS) must be accessible from the internet
 - **Memory**: At least 2GB RAM recommended
-- **Storage**: At least 10GB free disk space
+- **Storage**: At least 15GB free disk space (includes full repository clone)
 
 ## 🛠️ Installation
 
@@ -34,8 +35,8 @@ A comprehensive, interactive Bash script that automates the complete installatio
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/ruppdi75/paperless-ngx_public_server.git
-   cd paperless-ngx_public_server
+   git clone https://github.com/ruppdi75/paperless-ngx_public_server2.git
+   cd paperless-ngx_public_server2
    ```
 
 2. **Make the script executable**:
@@ -102,11 +103,13 @@ The installation process is divided into 6 phases:
 ## 📁 Project Structure
 
 ```
-paperless-ngx_public_server/
+paperless-ngx_public_server2/
 ├── install_paperless_ngx.sh    # Main installation script
 ├── README.md                   # This documentation
 ├── LICENSE                     # MIT License
 ├── .gitignore                  # Git ignore rules
+├── .env.template               # Secure environment template
+├── SECURITY_GUIDE.md           # Comprehensive security guide
 ├── docs/                       # Documentation
 │   ├── INSTALLATION.md         # Detailed installation guide
 │   ├── CONFIGURATION.md        # Configuration options
@@ -116,6 +119,9 @@ paperless-ngx_public_server/
 │   ├── docker-compose.yml      # Example Docker Compose file
 │   ├── Caddyfile               # Example Caddy configuration
 │   └── paperless.env           # Example environment variables
+├── scripts/                    # Security and utility scripts
+│   ├── generate_secrets.sh     # Secure credential generation
+│   └── credential_cleanup.sh   # Credential cleanup utility
 └── logs/                       # Log files (created during installation)
     ├── install_log_detailed.txt
     ├── install_log_summary.txt
@@ -206,12 +212,19 @@ After successful installation:
 
 ### 📦 Repository Resources
 
-The complete Paperless-ngx repository is available at `/opt/paperless/paperless-ngx/` with:
+After installation, you'll have access to:
 
-- **Documentation**: `/opt/paperless/paperless-ngx/docs/`
-- **Configuration Examples**: `/opt/paperless/paperless-ngx/docker/compose/`
-- **Source Code**: `/opt/paperless/paperless-ngx/src/`
-- **Additional Compose Files**: Alternative Docker configurations for different setups
+#### Our Installation Project
+- **Installation Directory**: `/opt/paperless/` - Working installation with security enhancements
+- **Security Templates**: `.env.template`, `SECURITY_GUIDE.md`, credential scripts
+- **Configuration Files**: Modified for secure deployment
+
+#### Complete Paperless-ngx Repository
+- **Full Repository**: `/opt/paperless/paperless-ngx/` - Complete upstream repository
+- **Documentation**: `/opt/paperless/paperless-ngx/docs/` - Official documentation
+- **Configuration Examples**: `/opt/paperless/paperless-ngx/docker/compose/` - Multiple Docker setups
+- **Source Code**: `/opt/paperless/paperless-ngx/src/` - Complete application source
+- **Additional Compose Files**: SQLite, PostgreSQL, and other configuration variants
 
 ## 🤝 Contributing
 
